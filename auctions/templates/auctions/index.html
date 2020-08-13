@@ -1,7 +1,16 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-<h1>TODO</h1>
-
-<a href="{% url 'auctions:logout' %}">Logout</a>
+{% for product in list %}
+<a>
+    <li>
+        <h3><a href="{% url 'auctions:product' product.pk %}">{{product.title}}</a>
+            <span>{{product.initial_bid}}</span>
+            <span>{{product.category}}</span></h3>
+        <p>{{product.description}}</p>
+    </li>
+</a>
+{% empty %}
+<p>No items!</p>
+{% endfor %}
 {% endblock %}

@@ -1,0 +1,12 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+<form action="" method="post">
+    {% csrf_token %}
+    <input type="text" name="title" placeholder="Title" autofocus autocomplete="off" required><br>
+    <textarea name="description" placeholder="Description" cols="60" rows="20" required></textarea><br>
+    <input type="number" name="initial_bid" placeholder="Initial bid" autofocus autocomplete="off" required><br>
+    <input type="text" name="category" placeholder="Category" autofocus autocomplete="off" required><br>
+    <input type="submit" value="Add">
+</form>
+{% endblock %}

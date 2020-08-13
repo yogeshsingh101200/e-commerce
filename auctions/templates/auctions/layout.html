@@ -8,6 +8,18 @@
 </head>
 
 <body>
+    <nav>
+        <ul>
+            {% if user.is_authenticated %}
+            <li><a href="{% url 'auctions:index' %}">Active Listing</a></li>
+            <li><a href="{% url 'auctions:create' %}">Create Listing</a></li>
+            <li><a href="{% url 'auctions:logout' %}">Logout</a></li>
+            {% else %}
+            <li><a href="{% url 'auctions:register' %}">Register</a></li>
+            <li><a href="{% url 'auctions:login' %}">Login</a></li>
+            {% endif %}
+        </ul>
+    </nav>
     {% block body %}
     {% endblock %}
 </body>

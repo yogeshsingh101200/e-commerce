@@ -1,0 +1,15 @@
+<h3>
+    {{product.title}}
+    <span>{{product.category}}</span>
+</h3>
+<p>{{product.description}}</p>
+
+<p>Initial bid: {{product.initial_bid}}</p>
+<p>Current bid: {{bid}}</p>
+
+<form action="{% url 'auctions:bid' %}" method="post">
+    {% csrf_token %}
+    <input type="hidden" name="product" value="{{product.pk}}" required>
+    <input type="number" name="bid" min="{{product.initial_bid}}" placeholder="{{product.initial_bid}}" required>
+    <input type="submit" value="Bid">
+</form>
