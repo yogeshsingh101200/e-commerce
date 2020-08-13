@@ -13,3 +13,23 @@
     <input type="number" name="bid" min="{{product.initial_bid}}" placeholder="{{product.initial_bid}}" required>
     <input type="submit" value="Bid">
 </form>
+
+<h2>Comments</h2>
+<hr>
+<form action="{% url 'auctions:add_comment' %}" method="post">
+    {% csrf_token %}
+    <input type="hidden" name="product" value="{{product.pk}}" required>
+    <textarea name="content" cols="30" rows="10" required></textarea>
+    <br>
+    <br>
+    <input type="submit" add>
+</form>
+<hr>
+{% for comment in comments %}
+<div>
+    <p>By: {{comment.user.username}}</p>
+    <p>{{comment.content}}</p>
+</div>
+{% empty %}
+<p>No comments!</p>
+{% endfor %}

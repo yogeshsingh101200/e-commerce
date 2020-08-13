@@ -6,8 +6,9 @@ from django.db import IntegrityError
 from django.shortcuts import render
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
+from django.db.models import Max
 
-from .models import User, AuctionListing, Bid
+from .models import User, AuctionListing, Bid, Comment
 
 
 @login_required
@@ -74,11 +75,11 @@ def create(request):
 
 def product_page(request, product_id):
     """ Product page """
-    bids = Bid.objects.filter(
-        product=AuctionListing.objects.get(pk=product_id))
+    product = AuctionListing.objects.get(pk=product_id)
     return render(request, "auctions/product.html", {
-        "product": AuctionListing.objects.get(pk=product_id),
-        "bid": max([bid.bid for bid in bids])
+        "product": product,
+        "bid": product.bids.all().aggregate(Max("bid")).get("bid__max"),
+        "comments": product.comments.all()
     })
 
 
@@ -89,5 +90,17 @@ def make_bid(request):
         product = AuctionListing.objects.get(pk=request.POST["product"])
         bid = Bid(bid=bid_amnt, user=request.user, product=product)
         bid.save()
+        return HttpResponseRedirect(reverse("auctions:product", args=(request.POST["product"],)))
+    return HttpResponseBadRequest(f"This method cannot handle method {request.method}", status=405)
+
+
+def add_comment(request):
+    """ Adds comment """
+    if request.method == "POST":
+        data = request.POST
+        content = data["content"]
+        product = AuctionListing.objects.get(pk=request.POST["product"])
+        comment = Comment(content=content, user=request.user, product=product)
+        comment.save()
         return HttpResponseRedirect(reverse("auctions:product", args=(request.POST["product"],)))
     return HttpResponseBadRequest(f"This method cannot handle method {request.method}", status=405)

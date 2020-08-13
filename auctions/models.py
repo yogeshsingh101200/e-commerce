@@ -28,3 +28,12 @@ class Bid(models.Model):
         User, on_delete=models.CASCADE, related_name="bids")
     product = models.ForeignKey(
         AuctionListing, on_delete=models.CASCADE, related_name="bids")
+
+
+class Comment(models.Model):
+    """ Represents comments table """
+    content = models.TextField()
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="comments")
+    product = models.ForeignKey(
+        AuctionListing, on_delete=models.CASCADE, related_name="comments")
