@@ -81,6 +81,8 @@ DATABASES = {
     }
 }
 
+AUTH_USER_MODEL = 'auctions.User'
+
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
@@ -121,4 +123,4 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 
-LOGIN_URL = "/login/"
+LOGIN_URL = "auctions:login"
