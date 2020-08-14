@@ -1,3 +1,6 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
 <h3>
     {{product.title}}
     <span>{{product.category}}</span>
@@ -12,6 +15,18 @@
     <input type="hidden" name="product" value="{{product.pk}}" required>
     <input type="number" name="bid" min="{{product.initial_bid}}" placeholder="{{product.initial_bid}}" required>
     <input type="submit" value="Bid">
+</form>
+
+<br>
+
+<form action="{% url 'auctions:watchlist' %}" method="post">
+    {% csrf_token %}
+    <input type="hidden" name="product" value="{{product.pk}}">
+    {% if in_watchlist %}
+    <input type="submit" value="Remove from watchlist">
+    {% else %}
+    <input type="submit" value="Add to watchlist">
+    {% endif %}
 </form>
 
 <h2>Comments</h2>
@@ -33,3 +48,5 @@
 {% empty %}
 <p>No comments!</p>
 {% endfor %}
+
+{% endblock %}

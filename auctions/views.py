@@ -8,7 +8,7 @@ from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.db.models import Max
 
-from .models import User, AuctionListing, Bid, Comment
+from .models import User, AuctionListing, Bid, Comment, WatchList
 
 
 @login_required
@@ -79,7 +79,8 @@ def product_page(request, product_id):
     return render(request, "auctions/product.html", {
         "product": product,
         "bid": product.bids.all().aggregate(Max("bid")).get("bid__max"),
-        "comments": product.comments.all()
+        "comments": product.comments.all(),
+        "in_watchlist": product.watchlist.filter(user=request.user)
     })
 
 
@@ -104,3 +105,19 @@ def add_comment(request):
         comment.save()
         return HttpResponseRedirect(reverse("auctions:product", args=(request.POST["product"],)))
     return HttpResponseBadRequest(f"This method cannot handle method {request.method}", status=405)
+
+
+def watchlist(request):
+    """ Displays user watchlist and also adds/remove product to/from watchlist """
+    if request.method == "POST":
+        data = request.POST
+        product = AuctionListing.objects.get(pk=data["product"])
+        if product.watchlist.filter(user=request.user):
+            product.watchlist.filter(user=request.user).delete()
+        else:
+            watchlist_item = WatchList(product=product, user=request.user)
+            watchlist_item.save()
+        return HttpResponseRedirect(reverse("auctions:product", args=(data["product"],)))
+    return render(request, "auctions/watchlist.html", {
+        "watchlist": request.user.watchlist.all()
+    })

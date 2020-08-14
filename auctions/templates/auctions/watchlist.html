@@ -1,0 +1,21 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+<ul>
+    <div>
+        Items:
+    </div>
+    {% for item in watchlist %}
+    <li>
+        <p>
+            {{item.product.title}}
+
+        </p>
+        {% empty %}
+        <p>
+            No items!
+        </p>
+        {% endfor %}
+    </li>
+</ul>
+{% endblock %}

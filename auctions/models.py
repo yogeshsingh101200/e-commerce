@@ -37,3 +37,11 @@ class Comment(models.Model):
         User, on_delete=models.CASCADE, related_name="comments")
     product = models.ForeignKey(
         AuctionListing, on_delete=models.CASCADE, related_name="comments")
+
+
+class WatchList(models.Model):
+    """ Represents watchlist table """
+    product = models.ForeignKey(
+        AuctionListing, on_delete=models.CASCADE, related_name="watchlist")
+    user = models.ForeignKey(User, on_delete=models.CASCADE,
+                             related_name="watchlist")

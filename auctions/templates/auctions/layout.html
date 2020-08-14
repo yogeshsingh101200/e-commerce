@@ -13,6 +13,7 @@
             {% if user.is_authenticated %}
             <li><a href="{% url 'auctions:index' %}">Active Listing</a></li>
             <li><a href="{% url 'auctions:create' %}">Create Listing</a></li>
+            <li><a href="{% url 'auctions:watchlist' %}">Watchlist</a></li>
             <li><a href="{% url 'auctions:logout' %}">Logout</a></li>
             {% else %}
             <li><a href="{% url 'auctions:register' %}">Register</a></li>
