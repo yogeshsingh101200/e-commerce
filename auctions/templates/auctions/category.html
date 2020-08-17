@@ -1,0 +1,21 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+<form action="{% url 'auctions:search_by_category' %}" method="post">
+    {% csrf_token %}
+    <select name="category">
+        <option value="" disabled selected>Category</option>
+        {% for category in categories %}
+        <option value="{{category}}">{{category}}</option>
+        {% endfor %}
+    </select>
+    <input type="submit" value="search">
+</form>
+
+{% for product in products %}
+<div><a href="{% url 'auctions:product' product.pk %}">{{product.title}}</a></div>
+{% empty %}
+No products!
+{% endfor %}
+
+{% endblock %}

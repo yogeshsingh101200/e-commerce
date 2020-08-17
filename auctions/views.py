@@ -121,3 +121,17 @@ def watchlist(request):
     return render(request, "auctions/watchlist.html", {
         "watchlist": request.user.watchlist.all()
     })
+
+
+def search_by_category(request):
+    """ TODO """
+    if request.method == "POST":
+        print(request.POST["category"])
+        print(AuctionListing.objects.filter(category=request.POST["category"]))
+        return render(request, "auctions/category.html", {
+            "products": AuctionListing.objects.filter(category=request.POST["category"]),
+            "categories": AuctionListing.objects.values_list("category", flat=True).distinct()
+        })
+    return render(request, "auctions/category.html", {
+        "categories": AuctionListing.objects.values_list("category", flat=True).distinct()
+    })
