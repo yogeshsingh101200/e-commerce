@@ -1,16 +1,33 @@
 {% extends "auctions/layout.html" %}
 
+{% block title %}
+Active Listing
+{% endblock %}
+
 {% block body %}
-{% for product in list %}
-<a>
-    <li>
-        <h3><a href="{% url 'auctions:product' product.pk %}">{{product.title}}</a>
-            <span>{{product.initial_bid}}</span>
-            <span>{{product.category}}</span></h3>
-        <p>{{product.description}}</p>
-    </li>
-</a>
-{% empty %}
-<p>No items!</p>
-{% endfor %}
+<div class="row mt-3 mb-3 mx-auto">
+    {% for product, bid in zip_products_bids %}
+    <div class="col-md-4">
+        <div class="card mb-4 shadow">
+            {% if product.category == "TV" %}
+            <img class="card-img-top .img-thumbnail"
+                src="https://images-na.ssl-images-amazon.com/images/I/71f-d89oqvL._SL1500_.jpg" alt="" />
+            {% else %}
+            <img class="card-img-top .img-thumbnail"
+                src="https://images-na.ssl-images-amazon.com/images/I/71yXShgxvpL._SL1500_.jpg" alt="" />
+            {% endif %}
+            <div class="card-body">
+                <div class="card-title">{{product.title | title}}</div>
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="card-text">Current Bid: INR {{bid}}</div>
+                    <div><a role="button" href="{% url 'auctions:product' product.pk %}"
+                            class="btn btn-sm btn-outline-dark">View</a></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    No products!
+    {% endfor %}
+</div>
 {% endblock %}
