@@ -14,8 +14,15 @@ from .models import User, AuctionListing, Bid, Comment, WatchList
 @login_required
 def index(request):
     """ main route """
+    products = AuctionListing.objects.all()
+    bids = []
+    for product in products:
+        bid = product.bids.all().aggregate(Max("bid")).get("bid__max")
+        if bid is None:
+            bid = product.initial_bid
+        bids.append(bid)
     return render(request, "auctions/index.html", {
-        "list": AuctionListing.objects.all()
+        "zip_products_bids": zip(products, bids)
     })
 
 
