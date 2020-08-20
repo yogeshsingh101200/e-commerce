@@ -17,7 +17,7 @@ Active Listing
                 src="https://images-na.ssl-images-amazon.com/images/I/71yXShgxvpL._SL1500_.jpg" alt="" />
             {% endif %}
             <div class="card-body">
-                <div class="card-title">{{product.title | title}}</div>
+                <h5 class="card-title">{{product.title | title}}</h5>
                 <div class="d-flex justify-content-between align-items-center">
                     <div class="card-text">Current Bid: INR {{bid}}</div>
                     <div><a role="button" href="{% url 'auctions:product' product.pk %}"
