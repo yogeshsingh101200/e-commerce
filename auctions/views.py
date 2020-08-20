@@ -114,6 +114,7 @@ def add_comment(request):
     return HttpResponseBadRequest(f"This method cannot handle method {request.method}", status=405)
 
 
+@login_required
 def watchlist(request):
     """ Displays user watchlist and also adds/remove product to/from watchlist """
     if request.method == "POST":
@@ -125,8 +126,18 @@ def watchlist(request):
             watchlist_item = WatchList(product=product, user=request.user)
             watchlist_item.save()
         return HttpResponseRedirect(reverse("auctions:product", args=(data["product"],)))
-    return render(request, "auctions/watchlist.html", {
-        "watchlist": request.user.watchlist.all()
+
+    records = request.user.watchlist.all()
+    products = []
+    bids = []
+    for record in records:
+        products.append(record.product)
+        bid = record.product.bids.all().aggregate(Max("bid")).get("bid_max")
+        if bid is None:
+            bid = record.product.initial_bid
+        bids.append(bid)
+    return render(request, "auctions/index.html", {
+        "zip_products_bids": zip(products, bids)
     })
 
 
