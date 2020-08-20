@@ -1,52 +1,91 @@
 {% extends "auctions/layout.html" %}
 
+{% block title %}
+{{product.title | title}}
+{% endblock %}
+
 {% block body %}
-<h3>
-    {{product.title}}
-    <span>{{product.category}}</span>
-</h3>
-<p>{{product.description}}</p>
+<div class="container-fluid mx-auto my-2">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h3>
+                {{product.title | title}}
+            </h3>
+        </div>
+        <div>
+            <form action="{% url 'auctions:watchlist' %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="product" value="{{product.pk}}">
+                {% if in_watchlist %}
+                <input type="submit" class="btn btn-outline-danger" value="Remove from watchlist">
+                {% else %}
+                <input type="submit" class="btn btn-outline-success" value="Add to watchlist">
+                {% endif %}
+            </form>
+        </div>
+    </div>
 
-<p>Initial bid: {{product.initial_bid}}</p>
-<p>Current bid: {{bid}}</p>
+    <hr class="mt-1">
 
-<form action="{% url 'auctions:bid' %}" method="post">
-    {% csrf_token %}
-    <input type="hidden" name="product" value="{{product.pk}}" required>
-    <input type="number" name="bid" min="{{product.initial_bid}}" placeholder="{{product.initial_bid}}" required>
-    <input type="submit" value="Bid">
-</form>
+    <div class="card mb-3 border-0">
+        <div class="row no-gutters">
+            <div class="col-md-4">
+                {% if product.category == "TV" %}
+                <img class="card-img-top .img-thumbnail"
+                    src="https://images-na.ssl-images-amazon.com/images/I/71f-d89oqvL._SL1500_.jpg" alt="" />
+                {% else %}
+                <img class="card-img-top .img-thumbnail"
+                    src="https://images-na.ssl-images-amazon.com/images/I/71yXShgxvpL._SL1500_.jpg" alt="" />
+                {% endif %}
+            </div>
+            <div class="col-md-8">
+                <div class="card-body">
+                    <p class="card-text">
+                        {{product.description}}
+                    </p>
+                    <form action="{% url 'auctions:bid' %}" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="product" value="{{product.pk}}" required>
+                        <h5>Current bid: INR {{bid}}</h5>
+                        <div class="input-group">
+                            <input class="form-control" type="number" name="bid" min="{{bid}}" placeholder="{{bid}}"
+                                required>
+                            <div class="input-group-append">
+                                <input class="btn btn-dark" type="submit" value="Place Bid">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<br>
+    <h2>Comments</h2>
+    <hr>
+    <form action="{% url 'auctions:add_comment' %}" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="product" value="{{product.pk}}" required>
+        <div class="form-group">
+            <label for="comment">Write a comment</label>
+            <textarea class="form-control" id="comment" name="content" rows="3" style="resize: none;"
+                required></textarea>
+        </div>
+        <input class="btn btn-success" type="submit" value="Add">
+    </form>
+    <hr>
 
-<form action="{% url 'auctions:watchlist' %}" method="post">
-    {% csrf_token %}
-    <input type="hidden" name="product" value="{{product.pk}}">
-    {% if in_watchlist %}
-    <input type="submit" value="Remove from watchlist">
-    {% else %}
-    <input type="submit" value="Add to watchlist">
-    {% endif %}
-</form>
-
-<h2>Comments</h2>
-<hr>
-<form action="{% url 'auctions:add_comment' %}" method="post">
-    {% csrf_token %}
-    <input type="hidden" name="product" value="{{product.pk}}" required>
-    <textarea name="content" cols="30" rows="10" required></textarea>
-    <br>
-    <br>
-    <input type="submit" add>
-</form>
-<hr>
-{% for comment in comments %}
-<div>
-    <p>By: {{comment.user.username}}</p>
-    <p>{{comment.content}}</p>
+    {% for comment in comments %}
+    <div class="card p-1 mb-1">
+        <div class="card-header p-1">
+            {{comment.user.username | title}}
+        </div>
+        <div class="card-body py-2 pr-2 pl-3">
+            <p class="card-text">{{comment.content}}</p>
+        </div>
+    </div>
+    {% empty %}
+    <p>No comments!</p>
+    {% endfor %}
 </div>
-{% empty %}
-<p>No comments!</p>
-{% endfor %}
 
 {% endblock %}
