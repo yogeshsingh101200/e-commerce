@@ -19,6 +19,8 @@ class AuctionListing(models.Model):
     initial_bid = models.IntegerField(
         default=1, validators=[MinValueValidator(1)])
     category = models.CharField(max_length=10)
+    buyer = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="owner", null=True)
 
 
 class Bid(models.Model):
