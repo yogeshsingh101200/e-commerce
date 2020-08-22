@@ -10,11 +10,31 @@ from django.db.models import Max
 
 from .models import User, AuctionListing, Bid, Comment, WatchList
 
+categories = [
+    "Appliances",
+    "Beauty",
+    "Books",
+    "Electronics",
+    "Fashion",
+    "Fitness",
+    "Furniture",
+    "Sports",
+    "Toys",
+    "Other"
+]
+
 
 @login_required
 def index(request):
     """ main route """
-    products = AuctionListing.objects.all()
+    if request.method == "POST" and request.POST["category"] != "All":
+        products = AuctionListing.objects.filter(
+            category=request.POST["category"])
+        selected = request.POST["category"]
+    else:
+        products = AuctionListing.objects.all()
+        selected = None
+
     bids = []
     for product in products:
         bid = product.bids.all().aggregate(Max("bid")).get("bid__max")
@@ -22,7 +42,9 @@ def index(request):
             bid = product.initial_bid
         bids.append(bid)
     return render(request, "auctions/index.html", {
-        "zip_products_bids": zip(products, bids)
+        "zip_products_bids": zip(products, bids),
+        "categories": categories,
+        "selected": selected
     })
 
 
@@ -77,7 +99,9 @@ def create(request):
                                  initial_bid=initial_bid, category=category)
         product.save()
         return HttpResponseRedirect(reverse("auctions:index"))
-    return render(request, "auctions/create.html")
+    return render(request, "auctions/create.html", {
+        "categories": categories
+    })
 
 
 def product_page(request, product_id):
@@ -114,7 +138,7 @@ def add_comment(request):
     return HttpResponseBadRequest(f"This method cannot handle method {request.method}", status=405)
 
 
-@login_required
+@ login_required
 def watchlist(request):
     """ Displays user watchlist and also adds/remove product to/from watchlist """
     if request.method == "POST":
@@ -138,18 +162,4 @@ def watchlist(request):
         bids.append(bid)
     return render(request, "auctions/index.html", {
         "zip_products_bids": zip(products, bids)
-    })
-
-
-def search_by_category(request):
-    """ TODO """
-    if request.method == "POST":
-        print(request.POST["category"])
-        print(AuctionListing.objects.filter(category=request.POST["category"]))
-        return render(request, "auctions/category.html", {
-            "products": AuctionListing.objects.filter(category=request.POST["category"]),
-            "categories": AuctionListing.objects.values_list("category", flat=True).distinct()
-        })
-    return render(request, "auctions/category.html", {
-        "categories": AuctionListing.objects.values_list("category", flat=True).distinct()
     })

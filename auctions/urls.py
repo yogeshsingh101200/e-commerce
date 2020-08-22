@@ -14,6 +14,5 @@ urlpatterns = [
     path("product/<int:product_id>", views.product_page, name="product"),
     path("bid", views.make_bid, name="bid"),
     path("add_comment", views.add_comment, name="add_comment"),
-    path("watchlist", views.watchlist, name="watchlist"),
-    path("search_by_category", views.search_by_category, name="search_by_category")
+    path("watchlist", views.watchlist, name="watchlist")
 ]

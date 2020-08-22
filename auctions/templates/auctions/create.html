@@ -20,7 +20,12 @@ Create
             </div>
             <div class="col-md-4">
                 <label for="category">Add category</label>
-                <input type="text" name="category" class="form-control" id="category" autocomplete="off" required>
+                <select id="category" class="form-control" name="category" required>
+                    <option value="" selected disabled>Select</option>
+                    {% for category in categories %}
+                    <option value="{{category}}">{{category}}</option>
+                    {% endfor %}
+                </select>
             </div>
         </div>
         <div class="row mt-1">

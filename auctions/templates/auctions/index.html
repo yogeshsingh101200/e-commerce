@@ -5,7 +5,33 @@ Active Listing
 {% endblock %}
 
 {% block body %}
-<div class="row mt-3 mb-3 mx-auto">
+<div class="row mt-3 mx-auto">
+    <div class="col">
+        <form id="categories" action="{% url 'auctions:index' %}" method="post">
+            {% csrf_token %}
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">Category</span>
+                </div>
+                <select id="category" class="form-control" name="category" required>
+                    <option value="All">All</option>
+                    {% for category in categories %}
+                    {% if category == selected %}
+                    <option value="{{category}}" selected>{{category}}</option>
+                    {% else %}
+                    <option value="{{category}}">{{category}}</option>
+                    {% endif %}
+                    {% endfor %}
+                </select>
+                <div class="input-group-append">
+                    <button type="submit" class="btn btn-dark">Submit</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="row mt-1 mb-3 mx-auto">
     {% for product, bid in zip_products_bids %}
     <div class="col-md-4">
         <div class="card mb-4 shadow">
@@ -27,7 +53,9 @@ Active Listing
         </div>
     </div>
     {% empty %}
-    No products!
+    <div class="text-muted" style="width: 100%;text-align: center;">
+        No products!
+    </div>
     {% endfor %}
 </div>
 {% endblock %}
