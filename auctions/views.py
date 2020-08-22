@@ -95,8 +95,9 @@ def create(request):
         description = data["description"]
         initial_bid = data["initial_bid"]
         category = data["category"]
+        url = data["url"]
         product = AuctionListing(user=request.user, title=title, description=description,
-                                 initial_bid=initial_bid, category=category)
+                                 initial_bid=initial_bid, category=category, imageURL=url)
         product.save()
         return HttpResponseRedirect(reverse("auctions:index"))
     return render(request, "auctions/create.html", {
@@ -138,7 +139,7 @@ def add_comment(request):
     return HttpResponseBadRequest(f"This method cannot handle method {request.method}", status=405)
 
 
-@ login_required
+@login_required
 def watchlist(request):
     """ Displays user watchlist and also adds/remove product to/from watchlist """
     if request.method == "POST":

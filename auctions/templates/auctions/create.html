@@ -9,16 +9,22 @@ Create
     <form action="{% url 'auctions:create' %}" method="POST">
         {% csrf_token %}
         <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-6">
                 <label for="title">Title of the listing</label>
                 <input type="text" name="title" class="form-control" id="title" autofocus autocomplete="off" required>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-6">
+                <label for="url">Url of the image</label>
+                <input type="url" name="url" class="form-control" id="url" autocomplete="off">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
                 <label for="bid">Starting bid of the listing</label>
                 <input type="number" name="initial_bid" class="form-control" id="bid" min="0" placeholder="0"
                     autocomplete="off" required>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-6">
                 <label for="category">Add category</label>
                 <select id="category" class="form-control" name="category" required>
                     <option value="" selected disabled>Select</option>

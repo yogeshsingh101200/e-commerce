@@ -30,13 +30,7 @@
     <div class="card mb-3 border-0">
         <div class="row no-gutters">
             <div class="col-md-4">
-                {% if product.category == "TV" %}
-                <img class="card-img-top .img-thumbnail"
-                    src="https://images-na.ssl-images-amazon.com/images/I/71f-d89oqvL._SL1500_.jpg" alt="" />
-                {% else %}
-                <img class="card-img-top .img-thumbnail"
-                    src="https://images-na.ssl-images-amazon.com/images/I/71yXShgxvpL._SL1500_.jpg" alt="" />
-                {% endif %}
+                <img class="card-img-top .img-thumbnail" src="{{product.imageURL}}" alt="image">
             </div>
             <div class="col-md-8">
                 <div class="card-body">
