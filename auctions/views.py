@@ -157,10 +157,37 @@ def watchlist(request):
     bids = []
     for record in records:
         products.append(record.product)
-        bid = record.product.bids.all().aggregate(Max("bid")).get("bid_max")
+        bid = record.product.bids.all().aggregate(Max("bid")).get("bid__max")
         if bid is None:
             bid = record.product.initial_bid
         bids.append(bid)
     return render(request, "auctions/index.html", {
         "zip_products_bids": zip(products, bids)
+    })
+
+
+def close_bid(request):
+    """ Sold Item """
+    if request.method == "POST":
+        product = AuctionListing.objects.get(pk=request.POST["product"])
+        max_bid = product.bids.all().aggregate(Max("bid")).get("bid__max")
+        bid = product.bids.get(bid=max_bid)
+        user = bid.user
+        product.buyer = user
+        product.save()
+        return HttpResponseRedirect(reverse("auctions:product", args=(request.POST["product"],)))
+    return HttpResponseBadRequest(f"This method cannot handle method {request.method}", status=405)
+
+
+def owned(request):
+    """ Displays items owned """
+    products = request.user.owner.all()
+    bids = []
+    for product in products:
+        bid = product.bids.all().aggregate(Max("bid")).get("bid__max")
+        bids.append(bid)
+    return render(request, "auctions/index.html", {
+        "zip_products_bids": zip(products, bids),
+        "categories": categories,
+        "selected": None
     })

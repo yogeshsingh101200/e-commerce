@@ -46,6 +46,17 @@
                     <p class="card-text">
                         {{product.description}}
                     </p>
+                    {% if product.buyer %}
+                    {% if request.user == product.buyer %}
+                    <div class="alert alert-success" role="alert">
+                        You won the bidding!
+                    </div>
+                    {% else %}
+                    <div class="alert alert-danger" role="alert">
+                        The product is sold!
+                    </div>
+                    {% endif %}
+                    {% else %}
                     <form action="{% url 'auctions:bid' %}" method="post">
                         {% csrf_token %}
                         <input type="hidden" name="product" value="{{product.pk}}" required>
@@ -58,6 +69,14 @@
                             </div>
                         </div>
                     </form>
+                    {% if request.user == product.user %}
+                    <form action="{% url 'auctions:close_bid' %}" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="product" value="{{product.pk}}" required>
+                        <button type="submit" class="btn btn-success mt-2">Close Bid</button>
+                    </form>
+                    {% endif %}
+                    {% endif %}
                 </div>
             </div>
         </div>
