@@ -22,6 +22,10 @@ class AuctionListing(models.Model):
     buyer = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="owner", null=True)
 
+    def __str__(self):
+        """ string representation """
+        return f"{self.title}"
+
 
 class Bid(models.Model):
     """ Represents bids table """
@@ -30,6 +34,10 @@ class Bid(models.Model):
         User, on_delete=models.CASCADE, related_name="bids")
     product = models.ForeignKey(
         AuctionListing, on_delete=models.CASCADE, related_name="bids")
+
+    def __str__(self):
+        """ string representation """
+        return f"{self.product.title}: {self.bid}"
 
 
 class Comment(models.Model):
@@ -40,6 +48,10 @@ class Comment(models.Model):
     product = models.ForeignKey(
         AuctionListing, on_delete=models.CASCADE, related_name="comments")
 
+    def __str__(self):
+        """ string representation """
+        return f"{self.user}"
+
 
 class WatchList(models.Model):
     """ Represents watchlist table """
@@ -47,3 +59,7 @@ class WatchList(models.Model):
         AuctionListing, on_delete=models.CASCADE, related_name="watchlist")
     user = models.ForeignKey(User, on_delete=models.CASCADE,
                              related_name="watchlist")
+
+    def __str__(self):
+        """ string representation """
+        return f"{self.product}: {self.user}"
