@@ -57,10 +57,18 @@
                     </div>
                     {% endif %}
                     {% else %}
+                    <h5>Max Bidder: {{max_bidder}}</h5>
+                    {% if request.user == product.user %}
+                    <form action="{% url 'auctions:close_bid' %}" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="product" value="{{product.pk}}" required>
+                        <button type="submit" class="btn btn-success mt-2">Close Bid</button>
+                    </form>
+                    {% else %}
                     <form action="{% url 'auctions:bid' %}" method="post">
                         {% csrf_token %}
                         <input type="hidden" name="product" value="{{product.pk}}" required>
-                        <h5>Current bid: INR {{bid}}</h5>
+                        <h5>Max bid: INR {{bid}}</h5>
                         <div class="input-group">
                             <input class="form-control" type="number" name="bid" min="{{bid}}" placeholder="{{bid}}"
                                 required>
@@ -68,12 +76,6 @@
                                 <input class="btn btn-dark" type="submit" value="Place Bid">
                             </div>
                         </div>
-                    </form>
-                    {% if request.user == product.user %}
-                    <form action="{% url 'auctions:close_bid' %}" method="post">
-                        {% csrf_token %}
-                        <input type="hidden" name="product" value="{{product.pk}}" required>
-                        <button type="submit" class="btn btn-success mt-2">Close Bid</button>
                     </form>
                     {% endif %}
                     {% endif %}

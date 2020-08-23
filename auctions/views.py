@@ -108,9 +108,12 @@ def create(request):
 def product_page(request, product_id):
     """ Product page """
     product = AuctionListing.objects.get(pk=product_id)
+    max_bid = product.bids.all().aggregate(Max("bid")).get("bid__max")
+    max_bidder = product.bids.get(bid=max_bid).user
     return render(request, "auctions/product.html", {
         "product": product,
-        "bid": product.bids.all().aggregate(Max("bid")).get("bid__max"),
+        "bid": max_bid,
+        "max_bidder": max_bidder,
         "comments": product.comments.all(),
         "in_watchlist": product.watchlist.filter(user=request.user)
     })
