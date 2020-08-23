@@ -7,14 +7,14 @@ app_name = "auctions"
 
 urlpatterns = [
     path("", views.index, name="index"),
-    path("register", views.register, name="register"),
-    path("login", views.login_view, name="login"),
-    path("logout", views.logout_view, name="logout"),
-    path("create", views.create, name="create"),
-    path("product/<int:product_id>", views.product_page, name="product"),
-    path("bid", views.make_bid, name="bid"),
-    path("add_comment", views.add_comment, name="add_comment"),
-    path("watchlist", views.watchlist, name="watchlist"),
-    path("close_bid", views.close_bid, name="close_bid"),
-    path("owned", views.owned, name="owned")
+    path("register/", views.register, name="register"),
+    path("login/", views.login_view, name="login"),
+    path("logout/", views.logout_view, name="logout"),
+    path("create/", views.create, name="create"),
+    path("product/<int:product_id>/", views.product_page, name="product"),
+    path("bid/", views.make_bid, name="bid"),
+    path("add_comment/", views.add_comment, name="add_comment"),
+    path("watchlist/", views.watchlist, name="watchlist"),
+    path("close_bid/", views.close_bid, name="close_bid"),
+    path("owned/", views.owned, name="owned")
 ]
