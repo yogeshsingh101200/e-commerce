@@ -38,8 +38,6 @@ def index(request):
     bids = []
     for product in products:
         bid = product.bids.all().aggregate(Max("bid")).get("bid__max")
-        if bid is None:
-            bid = product.initial_bid
         bids.append(bid)
     return render(request, "auctions/index.html", {
         "zip_products_bids": zip(products, bids),
@@ -96,9 +94,11 @@ def create(request):
         initial_bid = data["initial_bid"]
         category = data["category"]
         url = data["url"]
-        product = AuctionListing(user=request.user, title=title, description=description,
-                                 initial_bid=initial_bid, category=category, imageURL=url)
+        product = AuctionListing(user=request.user, title=title,
+                                 description=description, category=category, imageURL=url)
         product.save()
+        bid = Bid(user=request.user, bid=initial_bid, product=product)
+        bid.save()
         return HttpResponseRedirect(reverse("auctions:index"))
     return render(request, "auctions/create.html", {
         "categories": categories
@@ -110,7 +110,7 @@ def product_page(request, product_id):
     product = AuctionListing.objects.get(pk=product_id)
     return render(request, "auctions/product.html", {
         "product": product,
-        "bid": product.bids.all().aggregate(Max("bid")).get("bid__max") or product.initial_bid,
+        "bid": product.bids.all().aggregate(Max("bid")).get("bid__max"),
         "comments": product.comments.all(),
         "in_watchlist": product.watchlist.filter(user=request.user)
     })
@@ -158,8 +158,6 @@ def watchlist(request):
     for record in records:
         products.append(record.product)
         bid = record.product.bids.all().aggregate(Max("bid")).get("bid__max")
-        if bid is None:
-            bid = record.product.initial_bid
         bids.append(bid)
     return render(request, "auctions/index.html", {
         "zip_products_bids": zip(products, bids)
