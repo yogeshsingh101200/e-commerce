@@ -1,5 +1,7 @@
 {% extends "auctions/layout.html" %}
 
+{% load static %}
+
 {% block title %}
 Active Listing
 {% endblock %}
@@ -36,17 +38,18 @@ Active Listing
     {% if not product.buyer %}
     <div class="col-md-4">
         <div class="card mb-4 shadow">
-            {% if product.imageURL %}
-            <img class="card-img-top .img-thumbnail" src="{{product.imageURL}}" alt="image">
-            {% else %}
-            <svg class="card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg"
-                preserveAspectRatio="xMidYMid slice" focusable="false" style="text-anchor: middle;">
-                <rect width="100%" height="100%" fill="#55595c" /><text x="50%" y="50%" fill="#eceeef" dy=".3em">No
-                    image</text>
-            </svg>
-            {% endif %}
+            <div class="product-card-img-holder">
+                {% if product.imageURL %}
+                <img class="product-card-img" src="{{product.imageURL}}" alt="image">
+                {% else %}
+                <svg class="product-card-img" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice"
+                    focusable="false">
+                    <rect width="100%" height="100%" fill="#fff" /><text x="50%" y="50%" dy=".3em">No image</text>
+                </svg>
+                {% endif %}
+            </div>
             <div class="card-body">
-                <h5 class="card-title">{{product.title | title}}</h5>
+                <h5 class="card-title text-truncate">{{product.title | title}}</h5>
                 <div class="d-flex justify-content-between align-items-center">
                     <div class="card-text">Max Bid: INR {{bid}}</div>
                     <div><a role="button" href="{% url 'auctions:product' product.pk %}"
@@ -57,7 +60,7 @@ Active Listing
     </div>
     {% endif %}
     {% empty %}
-    <div class="text-muted" style="width: 100%;text-align: center;">
+    <div class="text-muted no-products">
         No products!
     </div>
     {% endfor %}
