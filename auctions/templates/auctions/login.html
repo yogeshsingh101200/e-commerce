@@ -8,6 +8,9 @@ Login
 <div class="d-flex justify-content-center mt-5">
     <form action="{% url 'auctions:login' %}" method="post">
         {% csrf_token %}
+        {% if next %}
+        <input type="hidden" name="next" value="{{next}}">
+        {% endif %}
         <div class="form-group">
             <label for="username">Username</label>
             <input type="text" name="username" class="form-control" id="username" autofocus autocomplete="off" required>

@@ -70,13 +70,16 @@ def login_view(request):
     if request.method == "POST":
         username = request.POST["username"]
         password = request.POST["password"]
+        next_url = request.POST.get("next")
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            if request.GET.get("next"):
-                return HttpResponseRedirect(request.GET["next"])
+            if next_url:
+                return HttpResponseRedirect(next_url)
             return HttpResponseRedirect(reverse("auctions:index"))
-    return render(request, "auctions/login.html")
+    return render(request, "auctions/login.html", {
+        "next": request.GET.get("next")
+    })
 
 
 def logout_view(request):
@@ -105,6 +108,7 @@ def create(request):
     })
 
 
+@login_required
 def product_page(request, product_id):
     """ Product page """
     product = AuctionListing.objects.get(pk=product_id)
