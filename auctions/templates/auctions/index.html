@@ -37,7 +37,7 @@ Active Listing
     {% for product, bid in zip_products_bids %}
     {% if not product.buyer %}
     <div class="col-md-4">
-        <div class="card mb-4 shadow">
+        <div class="card mb-4 shadow product-card">
             <div class="product-card-img-holder">
                 {% if product.imageURL %}
                 <img class="product-card-img" src="{{product.imageURL}}" alt="image">

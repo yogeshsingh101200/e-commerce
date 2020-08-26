@@ -10,6 +10,7 @@
 
 .product-card-img {
     height: 250px;
+    max-width: 100%;
     width: auto;
 }
 
