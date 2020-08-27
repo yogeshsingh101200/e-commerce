@@ -5,111 +5,104 @@
 {% endblock %}
 
 {% block body %}
-<div class="container-fluid mx-auto my-2">
-    <div class="d-flex justify-content-between align-items-center">
-        <div>
-            <h3>
-                {{product.title | title}}
-            </h3>
-        </div>
-        <div>
-            <form action="{% url 'auctions:watchlist' %}" method="post">
-                {% csrf_token %}
-                <input type="hidden" name="product" value="{{product.pk}}">
-                {% if in_watchlist %}
-                <input type="submit" class="btn btn-outline-danger" value="Remove from watchlist">
-                {% else %}
-                <input type="submit" class="btn btn-outline-success" value="Add to watchlist">
-                {% endif %}
-            </form>
-        </div>
-    </div>
-
-    <hr class="mt-1">
-
-    <div class="card mb-3 border-0">
-        <div class="row no-gutters">
-            <div class="col-md-4">
+<div class="container my-4">
+    <div class="row border shadow rounded-lg product">
+        <div class="col-md">
+            <div class="product-img-holder">
                 {% if product.imageURL %}
-                <img class="card-img-top" src="{{product.imageURL}}" alt="image">
+                <img class="product-img" src="{{product.imageURL}}" alt="image">
                 {% else %}
-                <svg class="bd-placeholder-img card-img-top" width="100%" height="225"
-                    xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false"
-                    style="text-anchor: middle;">
-                    <rect width="100%" height="100%" fill="#55595c" /><text x="50%" y="50%" fill="#eceeef" dy=".3em">No
-                        Image</text>
+                <svg class="product-card-img" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice"
+                    focusable="false">
+                    <rect width="100%" height="100%" fill="#fff" /><text x="50%" y="50%" dy=".3em">No image</text>
                 </svg>
                 {% endif %}
             </div>
-            <div class="col-md-8">
-                <div class="card-body">
-                    <p class="card-text">
-                        {{product.description}}
-                    </p>
-                    {% if product.buyer %}
-                    {% if request.user == product.buyer %}
-                    <div class="alert alert-success" role="alert">
-                        You won the bidding!
-                    </div>
-                    {% else %}
-                    <div class="alert alert-danger" role="alert">
-                        The product is sold!
-                    </div>
-                    {% endif %}
-                    {% else %}
-                    <h5>Max Bidder: {{max_bidder}}</h5>
-                    {% if request.user == product.user %}
-                    <form action="{% url 'auctions:close_bid' %}" method="post">
-                        {% csrf_token %}
-                        <input type="hidden" name="product" value="{{product.pk}}" required>
-                        <button type="submit" class="btn btn-success mt-2">Close Bid</button>
-                    </form>
-                    {% else %}
-                    <form action="{% url 'auctions:bid' %}" method="post">
-                        {% csrf_token %}
-                        <input type="hidden" name="product" value="{{product.pk}}" required>
-                        <h5>Max bid: INR {{bid}}</h5>
-                        <div class="input-group">
-                            <input class="form-control" type="number" name="bid" min="{{bid}}" placeholder="{{bid}}"
-                                required>
-                            <div class="input-group-append">
-                                <input class="btn btn-dark" type="submit" value="Place Bid">
-                            </div>
+        </div>
+        <div class="col-md">
+            <h3>{{product.title | title}}</h3>
+            <h2 title="Highest Bid">&#8377;{{bid}}</h2>
+            <p>Highest Bidder : {{max_bidder | title}}</p>
+            <hr>
+            <p>{{product.description}}</p>
+            {% if request.user.is_authenticated %}
+            <div>
+                {% if product.buyer %}
+                {% if request.user == product.buyer %}
+                <div class="alert alert-success" role="alert">
+                    You won the bidding!
+                </div>
+                {% else %}
+                <div class="alert alert-danger" role="alert">
+                    The product is sold!
+                </div>
+                {% endif %}
+                {% else %}
+                {% if request.user == product.user %}
+                <form action="{% url 'auctions:close_bid' %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="product" value="{{product.pk}}" required>
+                    <button type="submit" class="btn btn-success mt-2">Close Bid</button>
+                </form>
+                {% else %}
+                <form action="{% url 'auctions:bid' %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="product" value="{{product.pk}}" required>
+                    <div class="input-group">
+                        <input class="form-control" type="number" name="bid" min="{{bid}}" placeholder="{{bid}}"
+                            required>
+                        <div class="input-group-append">
+                            <input class="btn btn-dark" type="submit" value="Place Bid">
                         </div>
-                    </form>
+                    </div>
+                </form>
+                {% endif %}
+                {% endif %}
+            </div>
+            <div class="mt-4">
+                <form action="{% url 'auctions:watchlist' %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="product" value="{{product.pk}}">
+                    {% if in_watchlist %}
+                    <input type="submit" class="btn btn-danger" value="Remove from watchlist">
+                    {% else %}
+                    <input type="submit" class="btn btn-success" value="Add to watchlist">
                     {% endif %}
-                    {% endif %}
+                </form>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col-md mt-4">
+            <h2>Post a comment</h2>
+            <form action="{% url 'auctions:add_comment' %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="product" value="{{product.pk}}" required>
+                <div class="form-group">
+                    <textarea class="form-control shadow" name="content" rows="3" style="resize: none;"
+                        required></textarea>
+                </div>
+                <div class="d-flex justify-content-end">
+                    <input class="btn btn-success shadow" type="submit" value="Post">
+                </div>
+            </form>
+        </div>
+        <div class="col-md mt-4">
+            <h2>Comments</h2>
+            {% for comment in comments %}
+            <div class="comment border shadow mt-3">
+                <div class="comment-header">
+                    <strong class="mr-auto">{{ comment.user.username | title }}</strong>
+                </div>
+                <div class="comment-header">
+                    {{ comment.content }}
                 </div>
             </div>
+            {% empty %}
+            <p>No comments!</p>
+            {% endfor %}
         </div>
     </div>
-
-    <h2>Comments</h2>
-    <hr>
-    <form action="{% url 'auctions:add_comment' %}" method="post">
-        {% csrf_token %}
-        <input type="hidden" name="product" value="{{product.pk}}" required>
-        <div class="form-group">
-            <label for="comment">Write a comment</label>
-            <textarea class="form-control" id="comment" name="content" rows="3" style="resize: none;"
-                required></textarea>
-        </div>
-        <input class="btn btn-success" type="submit" value="Add">
-    </form>
-    <hr>
-
-    {% for comment in comments %}
-    <div class="card p-1 mb-1">
-        <div class="card-header p-1">
-            {{comment.user.username | title}}
-        </div>
-        <div class="card-body py-2 pr-2 pl-3">
-            <p class="card-text">{{comment.content}}</p>
-        </div>
-    </div>
-    {% empty %}
-    <p>No comments!</p>
-    {% endfor %}
 </div>
-
 {% endblock %}
