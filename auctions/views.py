@@ -2,13 +2,13 @@
 
 from django.http import HttpResponseRedirect, HttpResponseBadRequest
 from django.urls import reverse
-from django.db import IntegrityError
 from django.shortcuts import render
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.db.models import Max
 
 from .models import User, AuctionListing, Bid, Comment, WatchList
+from .forms import RegisterForm
 
 categories = [
     "Appliances",
@@ -49,20 +49,18 @@ def index(request):
 def register(request):
     """ Register a user to website """
     if request.method == "POST":
-        username = request.POST["username"]
-        password = request.POST["password"]
-        confirmation = request.POST["confirmation"]
-        if password != confirmation:
-            return render(request, "auctions/resgister.html")
-        try:
-            user = User.objects.create_user(username, password=password)
-        except IntegrityError:
-            return render(request, "auctions/register.html", {
-                "message": "Invalid credentials!"
-            })
-        login(request, user)
-        return HttpResponseRedirect(reverse("auctions:index"))
-    return render(request, "auctions/register.html")
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            form.save()
+            user = User.objects.get(username=form.cleaned_data["username"])
+            login(request, user=user)
+            return HttpResponseRedirect(reverse("auctions:index"))
+        return render(request, "auctions/register.html", {
+            "form": form
+        })
+    return render(request, "auctions/register.html", {
+        "form": RegisterForm()
+    })
 
 
 def login_view(request):
