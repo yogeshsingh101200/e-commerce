@@ -71,15 +71,13 @@ def login_view(request):
         if form.is_valid():
             user = User.objects.get(username=form.cleaned_data["username"])
             login(request, user)
-            if request.POST.get("next"):
-                return HttpResponseRedirect(request.POST["next"])
-            return HttpResponseRedirect(reverse("auctions:index"))
+            return HttpResponseRedirect(request.POST["next"])
         return render(request, "auctions/login.html", {
-            "next": request.POST["next"],
+            "next": request.POST.get("next") or reverse("auctions:index"),
             "form": form
         })
     return render(request, "auctions/login.html", {
-        "next": request.GET.get("next")
+        "next": request.GET.get("next") or reverse("auctions:index")
     })
 
 
