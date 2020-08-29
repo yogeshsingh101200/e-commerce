@@ -52,9 +52,8 @@ def register(request):
     if request.method == "POST":
         form = RegisterForm(request.POST)
         if form.is_valid():
-            form.save()
-            user = User.objects.get(username=form.cleaned_data["username"])
-            login(request, user=user)
+            user = form.save()
+            login(request, user)
             return HttpResponseRedirect(reverse("auctions:index"))
         return render(request, "auctions/register.html", {
             "form": form
@@ -69,7 +68,7 @@ def login_view(request):
     if request.method == "POST":
         form = AuthenticationForm(data=request.POST)
         if form.is_valid():
-            user = User.objects.get(username=form.cleaned_data["username"])
+            user = form.get_user()
             login(request, user)
             return HttpResponseRedirect(request.POST["next"])
         return render(request, "auctions/login.html", {
