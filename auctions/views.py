@@ -6,6 +6,7 @@ from django.shortcuts import render
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.db.models import Max
+from django.contrib.auth.forms import AuthenticationForm
 
 from .models import User, AuctionListing, Bid, Comment, WatchList
 from .forms import RegisterForm
@@ -64,17 +65,19 @@ def register(request):
 
 
 def login_view(request):
-    """ Logout a user """
+    """ Logins a user """
     if request.method == "POST":
-        username = request.POST["username"]
-        password = request.POST["password"]
-        next_url = request.POST.get("next")
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
+        form = AuthenticationForm(data=request.POST)
+        if form.is_valid():
+            user = User.objects.get(username=form.cleaned_data["username"])
             login(request, user)
-            if next_url:
-                return HttpResponseRedirect(next_url)
+            if request.POST.get("next"):
+                return HttpResponseRedirect(request.POST["next"])
             return HttpResponseRedirect(reverse("auctions:index"))
+        return render(request, "auctions/login.html", {
+            "next": request.POST["next"],
+            "form": form
+        })
     return render(request, "auctions/login.html", {
         "next": request.GET.get("next")
     })
