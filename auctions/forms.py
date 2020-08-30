@@ -15,4 +15,4 @@ class BidForm(forms.ModelForm):
     """ maps to bid model """
     class Meta:
         model = Bid
-        fields = "__all__"
+        fields = ["bid", "product"]

@@ -128,7 +128,9 @@ def make_bid(request):
     if request.method == "POST":
         form = BidForm(request.POST)
         if form.is_valid():
-            form.save()
+            bid = form.save(commit=False)
+            bid.user = request.user
+            bid.save()
             return HttpResponseRedirect(reverse("auctions:product",
                                                 args=(form.cleaned_data["product"].pk,)))
         for field in form:

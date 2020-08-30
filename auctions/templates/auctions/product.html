@@ -48,7 +48,6 @@
                 <form action="{% url 'auctions:bid' %}" method="post">
                     {% csrf_token %}
                     <input type="hidden" name="product" value="{{product.pk}}" required>
-                    <input type="hidden" name="user" value="{{request.user.pk}}" required>
                     {% for message in messages %}
                     <div class="alert alert-danger alert-dismissible fade show" role="alert">
                         {{message}}
