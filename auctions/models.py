@@ -1,9 +1,10 @@
 """ Models """
 
 from django.db import models
+from django.core.exceptions import ValidationError
 from django.contrib.auth.models import AbstractUser
-from django.core.validators import MinValueValidator
 from django.db.models import Max
+from django.utils.translation import gettext_lazy as _
 
 
 class User(AbstractUser):
@@ -29,7 +30,7 @@ class AuctionListing(models.Model):
 
 class Bid(models.Model):
     """ Represents bids table """
-    bid = models.IntegerField(default=1, validators=[MinValueValidator(1)])
+    bid = models.IntegerField()
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="bids")
     product = models.ForeignKey(
@@ -38,6 +39,13 @@ class Bid(models.Model):
     def __str__(self):
         """ string representation """
         return f"{self.product.title}: {self.bid}"
+
+    def clean(self):
+        """ validates bid """
+        max_bid = Bid.objects.filter(product=self.product).aggregate(
+            Max("bid")).get("bid__max")
+        if self.bid and self.bid <= max_bid:
+            raise ValidationError(_(f"Place bid higher than {max_bid}!"))
 
 
 class Comment(models.Model):

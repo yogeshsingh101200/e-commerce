@@ -3,13 +3,14 @@
 from django.http import HttpResponseRedirect, HttpResponseBadRequest
 from django.urls import reverse
 from django.shortcuts import render
-from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.db.models import Max
 from django.contrib.auth.forms import AuthenticationForm
+from django.contrib import messages
 
 from .models import User, AuctionListing, Bid, Comment, WatchList
-from .forms import RegisterForm
+from .forms import RegisterForm, BidForm
 
 categories = [
     "Appliances",
@@ -117,18 +118,26 @@ def product_page(request, product_id):
         "bid": max_bid,
         "max_bidder": max_bidder,
         "comments": product.comments.all(),
-        "in_watchlist": product.watchlist.filter(user=request.user)
+        "in_watchlist": product.watchlist.filter(user=request.user),
+        "form": BidForm()
     })
 
 
 def make_bid(request):
     """ Make bid """
     if request.method == "POST":
-        bid_amnt = request.POST["bid"]
-        product = AuctionListing.objects.get(pk=request.POST["product"])
-        bid = Bid(bid=bid_amnt, user=request.user, product=product)
-        bid.save()
-        return HttpResponseRedirect(reverse("auctions:product", args=(request.POST["product"],)))
+        form = BidForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse("auctions:product",
+                                                args=(form.cleaned_data["product"].pk,)))
+        for field in form:
+            for error in field.errors:
+                messages.error(request, error)
+        for error in form.non_field_errors():
+            messages.error(request, error)
+        return HttpResponseRedirect(reverse("auctions:product",
+                                            args=(form.cleaned_data["product"].pk,)))
     return HttpResponseBadRequest(f"This method cannot handle method {request.method}", status=405)
 
 
