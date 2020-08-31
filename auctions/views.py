@@ -9,7 +9,7 @@ from django.db.models import Max
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 
-from .models import User, AuctionListing, Bid, Comment, WatchList
+from .models import AuctionListing, Bid, Comment, WatchList
 from .forms import RegisterForm, BidForm
 
 categories = [

@@ -41,8 +41,7 @@ class Bid(models.Model):
         return f"{self.product.title}: {self.bid}"
 
     def clean(self):
-        """ validates bid """
-        super().clean()
+        """ validates if placed bid is more than highest bid """
         max_bid = Bid.objects.filter(product=self.product).aggregate(
             Max("bid")).get("bid__max")
         if self.bid and self.bid <= max_bid:
