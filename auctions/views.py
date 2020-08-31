@@ -10,7 +10,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 
 from .models import AuctionListing, Bid, Comment, WatchList
-from .forms import RegisterForm, BidForm
+from .forms import RegisterForm, BidForm, CommentForm
 
 categories = [
     "Appliances",
@@ -131,13 +131,14 @@ def make_bid(request):
             bid = form.save(commit=False)
             bid.user = request.user
             bid.save()
-            return HttpResponseRedirect(reverse("auctions:product",
-                                                args=(form.cleaned_data["product"].pk,)))
-        for field in form:
-            for error in field.errors:
-                messages.error(request, error)
-        for error in form.non_field_errors():
-            messages.error(request, error)
+        else:
+            for field in form:
+                for error in field.errors:
+                    messages.add_message(
+                        request, messages.ERROR, error, extra_tags="bid_form_error")
+            for error in form.non_field_errors():
+                messages.add_message(
+                    request, messages.ERROR, error, extra_tags="bid_form_error")
         return HttpResponseRedirect(reverse("auctions:product",
                                             args=(form.cleaned_data["product"].pk,)))
     return HttpResponseBadRequest(f"This method cannot handle method {request.method}", status=405)
@@ -146,12 +147,22 @@ def make_bid(request):
 def add_comment(request):
     """ Adds comment """
     if request.method == "POST":
-        data = request.POST
-        content = data["content"]
-        product = AuctionListing.objects.get(pk=request.POST["product"])
-        comment = Comment(content=content, user=request.user, product=product)
-        comment.save()
-        return HttpResponseRedirect(reverse("auctions:product", args=(request.POST["product"],)))
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.user = request.user
+            comment.save()
+        else:
+            for field in form:
+                for error in field.errors:
+                    messages.add_message(
+                        request, messages.ERROR, error, extra_tags="comment_form_error")
+            for error in form.non_field_errors():
+                messages.add_message(
+                    request, messages.ERROR, error, extra_tags="comment_form_error")
+        return HttpResponseRedirect(reverse("auctions:product",
+                                            args=(form.cleaned_data["product"].pk,)))
+
     return HttpResponseBadRequest(f"This method cannot handle method {request.method}", status=405)
 
 

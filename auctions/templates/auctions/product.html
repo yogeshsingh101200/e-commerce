@@ -49,12 +49,14 @@
                     {% csrf_token %}
                     <input type="hidden" name="product" value="{{product.pk}}" required>
                     {% for message in messages %}
+                    {% if message.extra_tags == "bid_form_error" %}
                     <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        {{message}}
+                        {{message.message}}
                         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
+                    {% endif %}
                     {% endfor %}
                     <div class="input-group">
                         <input class="form-control" type="number" name="bid"
@@ -87,9 +89,18 @@
             <form action="{% url 'auctions:add_comment' %}" method="post">
                 {% csrf_token %}
                 <input type="hidden" name="product" value="{{product.pk}}" required>
+                {% for message in messages %}
+                {% if message.extra_tags == "comment_form_error" %}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    {{message.message}}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                {% endif %}
+                {% endfor %}
                 <div class="form-group">
-                    <textarea class="form-control shadow" name="content" rows="3" style="resize: none;"
-                        required></textarea>
+                    <textarea class="form-control shadow" name="content" rows="3" style="resize: none;"></textarea>
                 </div>
                 <div class="d-flex justify-content-end">
                     <input class="btn btn-success shadow" type="submit" value="Post">
