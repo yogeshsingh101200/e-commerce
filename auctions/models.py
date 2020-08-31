@@ -42,7 +42,7 @@ class Bid(models.Model):
 
     def clean(self):
         """ validates if placed bid is more than highest bid """
-        max_bid = Bid.objects.filter(product=self.product).aggregate(
+        max_bid = self.product.bids.all().aggregate(
             Max("bid")).get("bid__max")
         if self.bid and self.bid <= max_bid:
             raise ValidationError(_(f"Place bid higher than {max_bid}!"))
