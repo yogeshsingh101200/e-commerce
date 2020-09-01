@@ -16,7 +16,7 @@ class AuctionListing(models.Model):
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="products")
     title = models.CharField(max_length=30)
-    imageURL = models.TextField(null=True, default=None)
+    imageURL = models.URLField(null=True, blank=True)
     description = models.TextField()
     category = models.CharField(max_length=10)
     buyer = models.ForeignKey(
