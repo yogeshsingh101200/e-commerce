@@ -5,28 +5,72 @@ Create
 {% endblock %}
 
 {% block body %}
+
+{% if form.errors %}
+{% for error in form.non_field_errors %}
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
+    {{ error|escape }}
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+{% endfor %}
+{% endif %}
+
 <div class="container mt-5 mb-2 mx-auto">
     <form action="{% url 'auctions:create' %}" method="POST">
         {% csrf_token %}
         <div class="row">
             <div class="col-md-6">
                 <label for="title">Title of the listing</label>
-                <input type="text" name="title" class="form-control" id="title" autofocus autocomplete="off" required>
+                {% for error in form.title.errors %}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    {{ error|escape }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                {% endfor %}
+                <input type="text" name="title" class="form-control" id="title" autofocus autocomplete="off">
             </div>
             <div class="col-md-6">
                 <label for="url">Url of the image</label>
-                <input type="url" name="url" class="form-control" id="url" autocomplete="off">
+                {% for error in form.imageURL.errors %}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    {{ error|escape }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                {% endfor %}
+                <input type="url" name="imageURL" class="form-control" id="url" autocomplete="off">
             </div>
         </div>
         <div class="row">
             <div class="col-md-6">
                 <label for="bid">Starting bid of the listing</label>
+                {% for error in form.initial_bid.errors %}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    {{ error|escape }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                {% endfor %}
                 <input type="number" name="initial_bid" class="form-control" id="bid" min="0" placeholder="0"
-                    autocomplete="off" required>
+                    autocomplete="off">
             </div>
             <div class="col-md-6">
                 <label for="category">Add category</label>
-                <select id="category" class="form-control" name="category" required>
+                {% for error in form.category.errors %}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    {{ error|escape }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                {% endfor %}
+                <select id="category" class="form-control" name="category">
                     <option value="" selected disabled>Select</option>
                     {% for category in categories %}
                     <option value="{{category}}">{{category}}</option>
@@ -37,7 +81,15 @@ Create
         <div class="row mt-1">
             <div class="col">
                 <label for="description">Description of the listing</label>
-                <textarea name="description" class="form-control" id="description" rows="10" required></textarea>
+                {% for error in form.description.errors %}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    {{ error|escape }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                {% endfor %}
+                <textarea name="description" class="form-control" id="description" rows="10"></textarea>
             </div>
         </div>
         <div class="d-flex justify-content-end mt-2">

@@ -9,8 +9,8 @@ from django.db.models import Max
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 
-from .models import AuctionListing, Bid, Comment, WatchList
-from .forms import RegisterForm, BidForm, CommentForm
+from .models import AuctionListing, Bid, WatchList
+from .forms import RegisterForm, BidForm, CommentForm, AuctionListingForm
 
 categories = [
     "Appliances",
@@ -90,18 +90,19 @@ def logout_view(request):
 def create(request):
     """ Creates listing """
     if request.method == "POST":
-        data = request.POST
-        title = data["title"]
-        description = data["description"]
-        initial_bid = data["initial_bid"]
-        category = data["category"]
-        url = data["url"]
-        product = AuctionListing(user=request.user, title=title,
-                                 description=description, category=category, imageURL=url)
-        product.save()
-        bid = Bid(user=request.user, bid=initial_bid, product=product)
-        bid.save()
-        return HttpResponseRedirect(reverse("auctions:index"))
+        form = AuctionListingForm(request.POST)
+        if form.is_valid():
+            product = form.save(commit=False)
+            product.user = request.user
+            product.save()
+            bid = Bid(user=request.user,
+                      bid=form.cleaned_data["initial_bid"], product=product)
+            bid.save()
+            return HttpResponseRedirect(reverse("auctions:index"))
+        return render(request, "auctions/create.html", {
+            "categories": categories,
+            "form": form
+        })
     return render(request, "auctions/create.html", {
         "categories": categories
     })

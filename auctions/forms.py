@@ -2,7 +2,7 @@
 
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from .models import User, Bid, Comment
+from .models import User, Bid, Comment, AuctionListing
 
 
 class RegisterForm(UserCreationForm):
@@ -23,3 +23,12 @@ class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
         fields = ["content", "product"]
+
+
+class AuctionListingForm(forms.ModelForm):
+    """ maps to auction listing model """
+    initial_bid = forms.IntegerField()
+
+    class Meta:
+        model = AuctionListing
+        fields = ["title", "imageURL", "description", "category"]
