@@ -28,7 +28,6 @@
             </p>
             <hr>
             <p>{{product.description}}</p>
-            {% if request.user.is_authenticated %}
             <div>
                 {% if product.buyer %}
                 {% if request.user == product.buyer %}
@@ -73,8 +72,18 @@
                 {% endif %}
             </div>
             <div class="mt-4">
-                <form action="{% url 'auctions:watchlist' %}" method="post">
+                <form action="{% url 'auctions:add_remove_watchlist' %}" method="post">
                     {% csrf_token %}
+                    {% for message in messages %}
+                    {% if message.extra_tags == "watchlist_form_error" %}
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        {{message.message}}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    {% endif %}
+                    {% endfor %}
                     <input type="hidden" name="product" value="{{product.pk}}">
                     {% if in_watchlist %}
                     <input type="submit" class="btn btn-danger" value="Remove from watchlist">
@@ -83,7 +92,6 @@
                     {% endif %}
                 </form>
             </div>
-            {% endif %}
         </div>
     </div>
     <div class="row mt-3">

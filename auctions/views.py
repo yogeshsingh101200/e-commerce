@@ -26,7 +26,6 @@ categories = [
 ]
 
 
-@login_required
 def index(request):
     """ main route """
     if request.method == "POST" and request.POST["category"] != "All":
@@ -88,6 +87,7 @@ def logout_view(request):
     return HttpResponseRedirect(reverse('auctions:login'))
 
 
+@login_required
 def create(request):
     """ Creates listing """
     if request.method == "POST":
@@ -109,7 +109,6 @@ def create(request):
     })
 
 
-@login_required
 def product_page(request, product_id):
     """ Product page """
     product = AuctionListing.objects.get(pk=product_id)
@@ -120,14 +119,22 @@ def product_page(request, product_id):
         "bid": max_bid,
         "max_bidder": max_bidder,
         "comments": product.comments.all(),
-        "in_watchlist": product.watchlist.filter(user=request.user),
+        "in_watchlist": product.watchlist.filter(
+            user=request.user) if request.user.is_authenticated else False,
         "form": BidForm()
     })
 
 
+# @login_required
 def make_bid(request):
     """ Make bid """
     if request.method == "POST":
+        if not request.user.is_authenticated:
+            messages.add_message(request, messages.ERROR,
+                                 "Your need to login/register to place bid!",
+                                 extra_tags="bid_form_error")
+            return HttpResponseRedirect(reverse("auctions:product",
+                                                args=(request.POST.get("product"),)))
         form = BidForm(request.POST)
         if form.is_valid():
             bid = form.save(commit=False)
@@ -146,9 +153,16 @@ def make_bid(request):
     return HttpResponseBadRequest(f"This method cannot handle method {request.method}", status=405)
 
 
+# @login_required
 def add_comment(request):
     """ Adds comment """
     if request.method == "POST":
+        if not request.user.is_authenticated:
+            messages.add_message(request, messages.ERROR,
+                                 "Your need to login/register to comment!",
+                                 extra_tags="comment_form_error")
+            return HttpResponseRedirect(reverse("auctions:product",
+                                                args=(request.POST.get("product"),)))
         form = CommentForm(request.POST)
         if form.is_valid():
             comment = form.save(commit=False)
@@ -165,6 +179,26 @@ def add_comment(request):
         return HttpResponseRedirect(reverse("auctions:product",
                                             args=(form.cleaned_data["product"].pk,)))
 
+    return HttpResponseBadRequest(f"This method cannot handle method {request.method}", status=405)
+
+
+def add_remove_watchlist(request):
+    """ Adds/remove product to/from watchlist """
+    if request.method == "POST":
+        if not request.user.is_authenticated:
+            messages.add_message(request, messages.ERROR,
+                                 "Your need to login/register to add to watchlist!",
+                                 extra_tags="watchlist_form_error")
+            return HttpResponseRedirect(reverse("auctions:product",
+                                                args=(request.POST.get("product"),)))
+        data = request.POST
+        product = AuctionListing.objects.get(pk=data["product"])
+        if product.watchlist.filter(user=request.user):
+            product.watchlist.filter(user=request.user).delete()
+        else:
+            watchlist_item = WatchList(product=product, user=request.user)
+            watchlist_item.save()
+        return HttpResponseRedirect(reverse("auctions:product", args=(data["product"],)))
     return HttpResponseBadRequest(f"This method cannot handle method {request.method}", status=405)
 
 
@@ -196,6 +230,7 @@ def watchlist(request):
     })
 
 
+@login_required
 def close_bid(request):
     """ Sold Item """
     if request.method == "POST":
