@@ -1,9 +1,7 @@
 {% extends "auctions/layout.html" %}
 
-{% load static %}
-
 {% block title %}
-Active Listing
+{{title}}
 {% endblock %}
 
 {% block body %}
@@ -35,7 +33,6 @@ Active Listing
 
 <div class="row mt-1 mb-3 mx-auto">
     {% for product, bid in zip_products_bids %}
-    {% if not product.buyer %}
     <div class="col-md-4">
         <div class="card mb-4 shadow product-card">
             <div class="product-card-img-holder">
@@ -58,7 +55,6 @@ Active Listing
             </div>
         </div>
     </div>
-    {% endif %}
     {% empty %}
     <div class="text-muted no-products">
         No products!

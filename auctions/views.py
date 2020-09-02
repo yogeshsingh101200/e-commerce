@@ -31,10 +31,10 @@ def index(request):
     """ main route """
     if request.method == "POST" and request.POST["category"] != "All":
         products = AuctionListing.objects.filter(
-            category=request.POST["category"])
+            category=request.POST["category"]).filter(buyer=None)
         selected = request.POST["category"]
     else:
-        products = AuctionListing.objects.all()
+        products = AuctionListing.objects.filter(buyer=None)
         selected = None
 
     bids = []
@@ -44,7 +44,8 @@ def index(request):
     return render(request, "auctions/index.html", {
         "zip_products_bids": zip(products, bids),
         "categories": categories,
-        "selected": selected
+        "selected": selected,
+        "title": "Active Listing"
     })
 
 
@@ -188,7 +189,10 @@ def watchlist(request):
         bid = record.product.bids.all().aggregate(Max("bid")).get("bid__max")
         bids.append(bid)
     return render(request, "auctions/index.html", {
-        "zip_products_bids": zip(products, bids)
+        "zip_products_bids": zip(products, bids),
+        "categories": categories,
+        "selected": None,
+        "title": "Watchlist"
     })
 
 
@@ -205,6 +209,7 @@ def close_bid(request):
     return HttpResponseBadRequest(f"This method cannot handle method {request.method}", status=405)
 
 
+@login_required
 def owned(request):
     """ Displays items owned """
     products = request.user.owner.all()
@@ -215,5 +220,6 @@ def owned(request):
     return render(request, "auctions/index.html", {
         "zip_products_bids": zip(products, bids),
         "categories": categories,
-        "selected": None
+        "selected": None,
+        "title": "Owned Items"
     })
