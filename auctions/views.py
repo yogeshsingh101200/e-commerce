@@ -10,40 +10,29 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 
 from .models import AuctionListing, Bid, WatchList
-from .forms import RegisterForm, BidForm, CommentForm, AuctionListingForm
-
-categories = [
-    "Appliances",
-    "Beauty",
-    "Books",
-    "Electronics",
-    "Fashion",
-    "Fitness",
-    "Furniture",
-    "Sports",
-    "Toys",
-    "Other"
-]
+from .forms import RegisterForm, BidForm, CommentForm, AuctionListingForm, SearchForm
 
 
 def index(request):
     """ main route """
-    if request.method == "POST" and request.POST["category"] != "All":
-        products = AuctionListing.objects.filter(
-            category=request.POST["category"]).filter(buyer=None)
-        selected = request.POST["category"]
+    form = None
+    if request.method == "POST":
+        form = SearchForm(request.POST)
+        if form.is_valid():
+            products = AuctionListing.objects.filter(buyer=None).filter(
+                title__icontains=form.cleaned_data["query"])
+        else:
+            products = AuctionListing.objects.filter(buyer=None)
     else:
         products = AuctionListing.objects.filter(buyer=None)
-        selected = None
-
     bids = []
     for product in products:
         bid = product.bids.all().aggregate(Max("bid")).get("bid__max")
         bids.append(bid)
     return render(request, "auctions/index.html", {
         "zip_products_bids": zip(products, bids),
-        "categories": categories,
-        "selected": selected,
+        "category": None,
+        "form": form,
         "title": "Active Listing"
     })
 
@@ -87,7 +76,7 @@ def logout_view(request):
     return HttpResponseRedirect(reverse('auctions:login'))
 
 
-@login_required
+@ login_required
 def create(request):
     """ Creates listing """
     if request.method == "POST":
@@ -101,12 +90,9 @@ def create(request):
             bid.save()
             return HttpResponseRedirect(reverse("auctions:index"))
         return render(request, "auctions/create.html", {
-            "categories": categories,
             "form": form
         })
-    return render(request, "auctions/create.html", {
-        "categories": categories
-    })
+    return render(request, "auctions/create.html")
 
 
 def product_page(request, product_id):
@@ -125,7 +111,6 @@ def product_page(request, product_id):
     })
 
 
-# @login_required
 def make_bid(request):
     """ Make bid """
     if request.method == "POST":
@@ -153,7 +138,6 @@ def make_bid(request):
     return HttpResponseBadRequest(f"This method cannot handle method {request.method}", status=405)
 
 
-# @login_required
 def add_comment(request):
     """ Adds comment """
     if request.method == "POST":
@@ -224,8 +208,6 @@ def watchlist(request):
         bids.append(bid)
     return render(request, "auctions/index.html", {
         "zip_products_bids": zip(products, bids),
-        "categories": categories,
-        "selected": None,
         "title": "Watchlist"
     })
 
@@ -254,7 +236,31 @@ def owned(request):
         bids.append(bid)
     return render(request, "auctions/index.html", {
         "zip_products_bids": zip(products, bids),
-        "categories": categories,
-        "selected": None,
         "title": "Owned Items"
+    })
+
+
+def display_by_category(request, category):
+    """ Displays articles by category"""
+    if request.method == "POST":
+        form = SearchForm(request.POST)
+        if form.is_valid():
+            products = AuctionListing.objects.filter(buyer=None).filter(
+                category__iexact=category).filter(title__icontains=form.cleaned_data["query"])
+        else:
+            products = AuctionListing.objects.filter(
+                category__iexact=category).filter(buyer=None)
+    else:
+        products = AuctionListing.objects.filter(
+            category__iexact=category).filter(buyer=None)
+        form = None
+    bids = []
+    for product in products:
+        bid = product.bids.all().aggregate(Max("bid")).get("bid__max")
+        bids.append(bid)
+    return render(request, "auctions/index.html", {
+        "zip_products_bids": zip(products, bids),
+        "category": category,
+        "form": form,
+        "title": "Active Listing",
     })

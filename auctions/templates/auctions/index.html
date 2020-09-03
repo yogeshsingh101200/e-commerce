@@ -5,26 +5,24 @@
 {% endblock %}
 
 {% block body %}
-<div class="row mt-3 mx-auto">
-    <div class="col">
-        <form id="categories" action="{% url 'auctions:index' %}" method="post">
+<div class="row mt-2 mx-auto">
+    <div class="col-md">
+        <form {% if category %} action="{% url 'auctions:category' category %}" {% else %}
+            action="{% url 'auctions:index' %}" {% endif %} method="POST">
             {% csrf_token %}
+            {% for error in form.query.errors %}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                {{ error|escape }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            {% endfor %}
             <div class="input-group mb-3">
-                <div class="input-group-prepend">
-                    <span class="input-group-text">Category</span>
-                </div>
-                <select id="category" class="form-control" name="category" required>
-                    <option value="All">All</option>
-                    {% for category in categories %}
-                    {% if category == selected %}
-                    <option value="{{category}}" selected>{{category}}</option>
-                    {% else %}
-                    <option value="{{category}}">{{category}}</option>
-                    {% endif %}
-                    {% endfor %}
-                </select>
+                <input type="text" name="query" class="form-control" placeholder="Type name of the product"
+                    autocomplete="off">
                 <div class="input-group-append">
-                    <button type="submit" class="btn btn-dark">Submit</button>
+                    <button type="submit" class="btn btn-dark">Search</button>
                 </div>
             </div>
         </form>

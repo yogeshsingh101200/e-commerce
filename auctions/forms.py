@@ -32,3 +32,8 @@ class AuctionListingForm(forms.ModelForm):
     class Meta:
         model = AuctionListing
         fields = ["title", "imageURL", "description", "category"]
+
+
+class SearchForm(forms.Form):
+    """ search form """
+    query = forms.CharField()

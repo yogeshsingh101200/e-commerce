@@ -72,9 +72,16 @@ Create
                 {% endfor %}
                 <select id="category" class="form-control" name="category">
                     <option value="" selected disabled>Select</option>
-                    {% for category in categories %}
-                    <option value="{{category}}">{{category}}</option>
-                    {% endfor %}
+                    <option value="appliances">Appliances</option>
+                    <option value="beauty">Beauty</option>
+                    <option value="books">Books</option>
+                    <option value="electronics">Electronics</option>
+                    <option value="fashion">Fashion</option>
+                    <option value="fitness">Fitness</option>
+                    <option value="furniture">Furniture</option>
+                    <option value="sports">Sports</option>
+                    <option value="toys">Toys</option>
+                    <option value="other">Other</option>
                 </select>
             </div>
         </div>
