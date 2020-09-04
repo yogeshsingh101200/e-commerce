@@ -188,17 +188,7 @@ def add_remove_watchlist(request):
 
 @login_required
 def watchlist(request):
-    """ Displays user watchlist and also adds/remove product to/from watchlist """
-    if request.method == "POST":
-        data = request.POST
-        product = AuctionListing.objects.get(pk=data["product"])
-        if product.watchlist.filter(user=request.user):
-            product.watchlist.filter(user=request.user).delete()
-        else:
-            watchlist_item = WatchList(product=product, user=request.user)
-            watchlist_item.save()
-        return HttpResponseRedirect(reverse("auctions:product", args=(data["product"],)))
-
+    """ Displays user watchlist """
     records = request.user.watchlist.all()
     products = []
     bids = []
