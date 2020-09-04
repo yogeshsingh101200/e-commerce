@@ -40,3 +40,28 @@ svg.product-card-img, svg.product-img {
 .comment {
     padding: 0.5rem;
 }
+
+div.scrollmenu {
+    display: flex;
+    background-color: #343a40;
+    overflow-x: auto;
+    white-space: nowrap;
+    width: 100%;
+}
+
+div.scrollmenu a {
+    flex: 0 0 auto;
+    color: white;
+    text-align: center;
+    padding: 0.75rem;
+    text-decoration: none;
+    margin-left: auto;
+}
+
+div.scrollmenu a:last-child {
+    margin-right: auto;
+}
+
+div.scrollmenu a:hover {
+    background-color: rgba(0, 0, 0, 0.5);
+}

@@ -5,8 +5,27 @@
 {% endblock %}
 
 {% block body %}
+
+<!-- TODO: Use url generator instead of absolute path -->
+{% if request.path != '/watchlist/' and request.path != '/owned/' %}
 <div class="row mt-2 mx-auto">
-    <div class="col-md">
+    <div class="scrollmenu">
+        <a href="{% url 'auctions:index' %}">All</a>
+        <a href="{% url 'auctions:category' 'appliances' %}">Appliances</a>
+        <a href="{% url 'auctions:category' 'beauty' %}">Beauty</a>
+        <a href="{% url 'auctions:category' 'books' %}">Books</a>
+        <a href="{% url 'auctions:category' 'electronics' %}">Electronics</a>
+        <a href="{% url 'auctions:category' 'fashion' %}">Fashion</a>
+        <a href="{% url 'auctions:category' 'fitness' %}">Fitness</a>
+        <a href="{% url 'auctions:category' 'furniture' %}">Furniture</a>
+        <a href="{% url 'auctions:category' 'sports' %}">Sports</a>
+        <a href="{% url 'auctions:category' 'toys' %}">Toys</a>
+        <a href="{% url 'auctions:category' 'other' %}">Other</a>
+    </div>
+</div>
+
+<div class="row mt-2 mx-auto">
+    <div class="col">
         <form {% if category %} action="{% url 'auctions:category' category %}" {% else %}
             action="{% url 'auctions:index' %}" {% endif %} method="POST">
             {% csrf_token %}
@@ -28,8 +47,9 @@
         </form>
     </div>
 </div>
+{% endif %}
 
-<div class="row mt-1 mb-3 mx-auto">
+<div class="row mt-2 mb-3 mx-auto">
     {% for product, bid in zip_products_bids %}
     <div class="col-md-4">
         <div class="card mb-4 shadow product-card">

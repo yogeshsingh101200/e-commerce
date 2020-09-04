@@ -38,24 +38,6 @@
                     <a class="nav-link" href="{% url 'auctions:owned' %}">Owned</a>
                 </li>
                 {% endif %}
-                <li class="nav-item dropdown">
-                    <a href="#" class="nav-link dropdown-toggle" id="categoryMenuButton" data-toggle="dropdown">
-                        {% if category %}{{ category|title }} {% else %} Categories : All {% endif %}
-                    </a>
-                    <div class="dropdown-menu">
-                        <a href="{% url 'auctions:index' %}" class="dropdown-item">All</a>
-                        <a href="{% url 'auctions:category' 'appliances' %}" class="dropdown-item">Appliances</a>
-                        <a href="{% url 'auctions:category' 'beauty' %}" class="dropdown-item">Beauty</a>
-                        <a href="{% url 'auctions:category' 'books' %}" class="dropdown-item">Books</a>
-                        <a href="{% url 'auctions:category' 'electronics' %}" class="dropdown-item">Electronics</a>
-                        <a href="{% url 'auctions:category' 'fashion' %}" class="dropdown-item">Fashion</a>
-                        <a href="{% url 'auctions:category' 'fitness' %}" class="dropdown-item">Fitness</a>
-                        <a href="{% url 'auctions:category' 'furniture' %}" class="dropdown-item">Furniture</a>
-                        <a href="{% url 'auctions:category' 'sports' %}" class="dropdown-item">Sports</a>
-                        <a href="{% url 'auctions:category' 'toys' %}" class="dropdown-item">Toys</a>
-                        <a href="{% url 'auctions:category' 'other' %}" class="dropdown-item">Other</a>
-                    </div>
-                </li>
             </ul>
             {% if user.is_authenticated %}
             <ul class="navbar-nav ml-auto">

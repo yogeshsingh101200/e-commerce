@@ -248,11 +248,11 @@ def display_by_category(request, category):
             products = AuctionListing.objects.filter(buyer=None).filter(
                 category__iexact=category).filter(title__icontains=form.cleaned_data["query"])
         else:
-            products = AuctionListing.objects.filter(
-                category__iexact=category).filter(buyer=None)
+            products = AuctionListing.objects.filter(buyer=None).filter(
+                category__iexact=category)
     else:
-        products = AuctionListing.objects.filter(
-            category__iexact=category).filter(buyer=None)
+        products = AuctionListing.objects.filter(buyer=None).filter(
+            category__iexact=category)
         form = None
     bids = []
     for product in products:
