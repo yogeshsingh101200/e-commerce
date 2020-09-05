@@ -65,3 +65,57 @@ div.scrollmenu a:last-child {
 div.scrollmenu a:hover {
     background-color: rgba(0, 0, 0, 0.5);
 }
+
+/* The side navigation menu */
+.sidenav {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #343a40;
+    overflow-x: hidden;
+    padding-top: 3rem;
+    transition: 0.5s;
+}
+
+/* The navigation menu links */
+.sidenav a {
+    padding: 0.25rem 0.25rem 0.25rem 2rem;
+    text-decoration: none;
+    font-size: 1.25rem;
+    color: rgba(255, 255, 255, 0.8);
+    display: block;
+    transition: 0.3s;
+}
+
+/* Position and style the close button (top right corner) */
+.sidenav .closebtn {
+    position: absolute;
+    top: 0;
+    right: 1rem;
+    font-size: 1.5rem;
+    margin-left: 2rem;
+}
+
+@media screen and (max-height: 450px) {
+    .sidenav {padding-top: 0.75rem;}
+    .sidenav a {font-size: 1rem;}
+}
+
+.non-mobile-navbar {
+    display: none;
+}
+
+@media (min-width: 768px) {
+
+    .non-mobile-navbar {
+        display: flex;
+    }
+
+    .mobile-navbar {
+        display: none;
+    }
+
+}
