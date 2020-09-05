@@ -72,7 +72,7 @@
                 {% endif %}
             </div>
             <div class="mt-4">
-                <form action="{% url 'auctions:add_remove_watchlist' %}" method="post">
+                <form action="{% url 'auctions:product' product.pk %}" method="post">
                     {% csrf_token %}
                     {% for message in messages %}
                     {% if message.extra_tags == "watchlist_form_error" %}
@@ -84,7 +84,6 @@
                     </div>
                     {% endif %}
                     {% endfor %}
-                    <input type="hidden" name="product" value="{{product.pk}}">
                     {% if in_watchlist %}
                     <input type="submit" class="btn btn-danger" value="Remove from watchlist">
                     {% else %}

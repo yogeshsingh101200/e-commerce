@@ -97,6 +97,19 @@ def create(request):
 
 def product_page(request, product_id):
     """ Product page """
+    if request.method == "POST":
+        if not request.user.is_authenticated:
+            messages.add_message(request, messages.ERROR,
+                                 "Your need to login/register to add to watchlist!",
+                                 extra_tags="watchlist_form_error")
+            return HttpResponseRedirect(request.path)
+        product = AuctionListing.objects.get(pk=product_id)
+        if product.watchlist.filter(user=request.user):
+            product.watchlist.filter(user=request.user).delete()
+        else:
+            product = WatchList(user=request.user, product=product)
+            product.save()
+        return HttpResponseRedirect(request.path)
     product = AuctionListing.objects.get(pk=product_id)
     max_bid = product.bids.all().aggregate(Max("bid")).get("bid__max")
     max_bidder = product.bids.get(bid=max_bid).user
@@ -163,26 +176,6 @@ def add_comment(request):
         return HttpResponseRedirect(reverse("auctions:product",
                                             args=(form.cleaned_data["product"].pk,)))
 
-    return HttpResponseBadRequest(f"This method cannot handle method {request.method}", status=405)
-
-
-def add_remove_watchlist(request):
-    """ Adds/remove product to/from watchlist """
-    if request.method == "POST":
-        if not request.user.is_authenticated:
-            messages.add_message(request, messages.ERROR,
-                                 "Your need to login/register to add to watchlist!",
-                                 extra_tags="watchlist_form_error")
-            return HttpResponseRedirect(reverse("auctions:product",
-                                                args=(request.POST.get("product"),)))
-        data = request.POST
-        product = AuctionListing.objects.get(pk=data["product"])
-        if product.watchlist.filter(user=request.user):
-            product.watchlist.filter(user=request.user).delete()
-        else:
-            watchlist_item = WatchList(product=product, user=request.user)
-            watchlist_item.save()
-        return HttpResponseRedirect(reverse("auctions:product", args=(data["product"],)))
     return HttpResponseBadRequest(f"This method cannot handle method {request.method}", status=405)
 
 
