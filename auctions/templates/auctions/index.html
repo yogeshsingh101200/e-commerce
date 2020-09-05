@@ -51,7 +51,7 @@
 
 <div class="row mt-2 mb-3 mx-auto">
     {% for product, bid in zip_products_bids %}
-    <div class="col-md-4">
+    <div class="col-md-6 col-lg-4">
         <div class="card mb-4 shadow product-card">
             <div class="product-card-img-holder">
                 {% if product.imageURL %}
@@ -64,7 +64,7 @@
                 {% endif %}
             </div>
             <div class="card-body">
-                <h5 class="card-title text-truncate">{{product.title | title}}</h5>
+                <h5 class="card-title text-truncate">{{ product.title|title }}</h5>
                 <div class="d-flex justify-content-between align-items-center">
                     <div class="card-text">Highest Bid : &#8377;{{bid}}</div>
                     <div><a role="button" href="{% url 'auctions:product' product.pk %}"
