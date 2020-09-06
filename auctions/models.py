@@ -15,7 +15,7 @@ class AuctionListing(models.Model):
     """ Represents table containing auction listing """
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="products")
-    title = models.CharField(max_length=30)
+    title = models.CharField(max_length=50)
     imageURL = models.URLField(null=True, blank=True)
     description = models.TextField()
     category = models.CharField(max_length=10)
