@@ -30,7 +30,7 @@ class AuctionListing(models.Model):
 
 class Bid(models.Model):
     """ Represents bids table """
-    bid = models.IntegerField()
+    bid = models.PositiveIntegerField()
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="bids")
     product = models.ForeignKey(
